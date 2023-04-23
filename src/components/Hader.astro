@@ -1,0 +1,259 @@
+---
+---
+<header class="header">
+  <div class="header__contentsWrapper">
+    <div class="header__logoArea">
+      <a class="header__link" id="header-logo" href="https://elcamy.com">
+        <img src="https://storage.googleapis.com/notionstyles.appspot.com/users/ujT78bcmTYfqz1aBG2FquMiyJMU2/f1115d4e-4337-4656-8abd-f0d16dca2a4a.svg" class="header__img" alt="株式会社Elcamy（エルカミー）| AI・機械学習・分析を支援するGoogle Cloudパートナー" height="24" width="auto">
+      </a>
+    </div>
+    <div class="header__btns">
+      <a class="header__btn" href="https://elcamy.com/about" target="" id="header-link-0">会社情報</a>
+      <a class="header__btn" href="https://elcamy.com/service" target="" id="header-link-1">サービス</a>
+      <a class="header__btn" href="https://elcamy.com/recruit	" target="" id="header-link-2">採用情報</a>
+      <a class="header__btn" href="https://elcamy.com/contact" target="" id="header-link-3">お問い合わせ</a>
+    </div>
+    <button id="header-btn-menu" aria-label="メニュー" aria-haspopup="menu" aria-expanded="false" aria-controls="headerMenu" class="header__menuOpenBtn">
+      <svg viewBox="0 0 512 512">
+        <g>
+          <rect y="20" width="512" height="60"></rect>
+          <rect y="220" width="512" height="60"></rect>
+          <rect y="420" width="512" height="60"></rect>
+        </g>
+      </svg>
+    </button>
+    <div id="headerMenu" class="header__menu" tabindex="-1">
+      <div class="header__menuWrapper">
+        <a class="header__menuBtn" href="https://elcamy.com/about" target="" id="header-menu-link-0">会社情報</a>
+        <a class="header__menuBtn" href="https://elcamy.com/service" target="" id="header-menu-link-1">サービス</a>
+        <a class="header__menuBtn" href="https://elcamy.com/recruit	" target="" id="header-menu-link-2">採用情報</a>
+        <a class="header__menuBtn" href="https://elcamy.com/contact" target="" id="header-menu-link-3">お問い合わせ</a>
+        <button id="header-btn-close" aria-label="メニューを閉じる" class="header__menuCloseBtn">
+          <svg viewBox="0 0 329 329"><g><path d="m194.800781 164.769531 128.210938-128.214843c8.34375-8.339844 8.34375-21.824219 0-30.164063-8.339844-8.339844-21.824219-8.339844-30.164063 0l-128.214844 128.214844-128.210937-128.214844c-8.34375-8.339844-21.824219-8.339844-30.164063 0-8.34375 8.339844-8.34375 21.824219 0 30.164063l128.210938 128.214843-128.210938 128.214844c-8.34375 8.339844-8.34375 21.824219 0 30.164063 4.15625 4.160156 9.621094 6.25 15.082032 6.25 5.460937 0 10.921875-2.089844 15.082031-6.25l128.210937-128.214844 128.214844 128.214844c4.160156 4.160156 9.621094 6.25 15.082032 6.25 5.460937 0 10.921874-2.089844 15.082031-6.25 8.34375-8.339844 8.34375-21.824219 0-30.164063zm0 0"></path></g></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<style>
+:root {
+    --theme-color: #00BFA7;
+    --gray-bg-color: #f4f6f6;
+    --text-color: #323434;
+    --header-height: 55px;
+}
+
+:root {
+    --fg-color: rgb(55, 53, 47);
+    --bg-color: #fff;
+    --fg-color-1: rgba(55, 53, 47, 0.16);
+}
+
+.lang-ja {
+    font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+}
+
+div {
+    line-height: 1.5;
+    display: block;
+}
+
+/* ヘッダー */
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: var(--header-height);
+  box-sizing: border-box;
+  background: var(--bg-color);
+  z-index: 10;
+}
+.header__contentsWrapper {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    box-sizing: border-box;
+    margin: 0 auto;
+    padding: 4px 16px;
+}
+.header__link {
+    font-weight: bold;
+    text-decoration: none;
+    font-size: 22px;
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+/* ロゴ */
+.header__logoArea{
+  flex: 1;
+  width: 0;
+  display: flex;
+}
+img {
+  overflow: hidden;
+}
+a:hover {
+  opacity: 0.8;
+}
+
+/* ボタン */
+.header__btns {
+    display: flex;
+    justify-content: space-between;
+    margin-left: 0.5em;
+}
+.header__btn:not(:first-child) {
+    margin-left: 1em;
+}
+.header__btn{
+  font-weight: bold;
+  text-decoration: none;
+  white-space: nowrap;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  color: var(--text-color);
+}
+
+/* 問い合わせボタン */
+.header a[href*="https://elcamy.com/contact"] {
+  border-radius: 2px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .6);
+  background-color: var(--theme-color);
+  transition: background-color .3s;
+  width: auto;
+  display: inline-block;
+  padding: 0 20px;
+  margin: 0 0 0 12px;
+  font-size: 0.9rem;
+  line-height: 33px;
+  height: 35px;
+  color: #fff !important;
+  background-color: var(--theme-color);
+}
+
+/* メニューオープンボタン */
+.header__menuOpenBtn, .header__menuCloseBtn {
+    border: none;
+    background: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 4px;
+    padding: 0;
+    align-items: center;
+    cursor: pointer;
+}
+.header__menuOpenBtn {
+    display: none;
+    justify-content: center;    
+    color: var(--theme-color);
+}
+.header__menuOpenBtn:hover, .header__menuCloseBtn:hover, .header__searchOpenBtn:hover {
+    background-color: var(--fg-color-1);
+}
+.header__menuOpenBtn > svg {
+    fill: currentColor;
+}
+.header__menuOpenBtn svg, .header__menuCloseBtn svg {
+    width: 24px;
+    height: 24px;
+}
+svg:not(:root) {
+    overflow-clip-margin: content-box;
+    overflow: hidden;
+}
+
+/* メニュー */
+.header--menuActive .header__menu {
+    display: block;
+}
+.header__menu {
+    display: none;
+    position: absolute;
+    background: #ffffff;
+    top: 8px;
+    right: 8px;
+    width: calc(100% - 16px);
+    max-height: 96vh;
+    max-height: 96svh;
+    overflow: scroll;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+    -webkit-overflow-scrolling: touch !important;
+}
+
+/* メニューボタン */
+.header__menuWrapper .header__menuBtn {
+    margin-left: 0 !important;
+}
+.header__menuWrapper {
+    position: relative;
+    padding: 16px;
+}
+.header__menuBtn {
+    display: block;
+    text-decoration: none;
+    color: var(--text-color);
+    font-weight: bold;
+}
+.header__menuBtn:not(:nth-last-child(2)) {
+    margin-bottom: 16px;
+}
+
+/* メニュークローズボタン */
+.header__menuCloseBtn {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    justify-content: center;
+}
+
+/* モバイル */
+@media (max-width: 640px) {
+  .header__btns {
+    display: none;
+  }
+  .header__contentsWrapper {
+    padding: 4px 8px;
+  }
+  .header__menuOpenBtn {
+    display: flex;
+  }
+}
+</style>
+
+<script>
+  var menuButton = document.getElementById("header-btn-menu");
+  var menu = document.getElementById("headerMenu");
+  var closeButton = document.getElementById("header-btn-close");
+  var header = document.querySelector("header");
+  var expanded = false;
+
+  menuButton.addEventListener("click", function() {
+    expanded = !expanded;
+
+    if (expanded) {
+      menuButton.setAttribute("aria-expanded", "true");
+      header.classList.add("header--menuActive");
+    } else {
+      menuButton.setAttribute("aria-expanded", "false");
+      header.classList.remove("header--menuActive");
+    }
+  });
+
+  closeButton.addEventListener("click", function() {
+    expanded = false;
+    menuButton.setAttribute("aria-expanded", "false");
+    header.classList.remove("header--menuActive");
+  });
+</script>

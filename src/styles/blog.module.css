@@ -13,6 +13,8 @@
 }
 
 .post {
+  border-top: 1px dashed #888;
+  padding: 1rem;
   margin: 0 auto 40px;
 }
 .post :global(h3) {

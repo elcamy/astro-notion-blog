@@ -4,6 +4,7 @@ import { getDatabase } from '../lib/notion/client.ts'
 import { getNavLink, getStaticFilePath, filePath } from '../lib/blog-helpers.ts'
 import '../styles/syntax-coloring.css'
 import GoogleAnalytics from '../components/GoogleAnalytics.astro'
+import Hader from '../components/Hader.astro'
 
 export interface Props {
   title: string
@@ -47,7 +48,7 @@ const asidePaddingTop = coverImageURL ? '200px' : '60px'
 ---
 
 <!DOCTYPE html>
-<html lang="en" prefix="og: https://ogp.me/ns#">
+<html lang="ja" prefix="og: https://ogp.me/ns#">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="max-image-preview:large" />
@@ -73,19 +74,8 @@ const asidePaddingTop = coverImageURL ? '200px' : '60px'
     />
   </head>
   <body>
-    <div id="header"></div>
-
-    <script>
-      fetch('https://elcamy.com')
-        .then(response => response.text())
-        .then(data => {
-          const parser = new DOMParser();
-          const htmlDoc = parser.parseFromString(data, 'text/html');
-          const headerElement = htmlDoc.querySelector('header');
-          document.getElementById('header').innerHTML = headerElement.outerHTML;
-        });
-    </script>
     <GoogleAnalytics trackingId={PUBLIC_GA_TRACKING_ID} />
+    <Hader />
     <div class="container">
       <main>
         {
