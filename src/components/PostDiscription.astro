@@ -1,0 +1,29 @@
+---
+import PostFeaturedImage from '../components/PostFeaturedImage.astro'
+import PostExcerpt from '../components/PostExcerpt.astro'
+import ReadMoreLink from '../components/ReadMoreLink.astro'
+
+import { Post } from '../lib/interfaces.ts'
+
+export interface Props {
+  post: Post
+}
+
+const { post } = Astro.props
+---
+
+<div class="post-discription__wrapper">
+  <div class="post-img">
+    <PostFeaturedImage post={post} />
+  </div>
+  <div>
+    <PostExcerpt post={post} />
+    <ReadMoreLink post={post} />
+  </div>
+</div>
+
+<style>
+.post-discription__wrapper {
+    display: flex;
+  }
+</style>

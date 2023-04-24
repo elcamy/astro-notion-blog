@@ -11,9 +11,7 @@ import NoContents from '../components/NoContents.astro'
 import PostDate from '../components/PostDate.astro'
 import PostTags from '../components/PostTags.astro'
 import PostTitle from '../components/PostTitle.astro'
-import PostFeaturedImage from '../components/PostFeaturedImage.astro'
-import PostExcerpt from '../components/PostExcerpt.astro'
-import ReadMoreLink from '../components/ReadMoreLink.astro'
+import PostDiscription from '../components/PostDiscription.astro'
 import Pagination from '../components/Pagination.astro'
 import BlogPostsLink from '../components/BlogPostsLink.astro'
 import BlogTagsLink from '../components/BlogTagsLink.astro'
@@ -38,15 +36,7 @@ const [posts, rankedPosts, tags, numberOfPages] = await Promise.all([
             <PostDate post={post} />
             <PostTags post={post} />
             <PostTitle post={post} />
-            <div class="post-discription">
-              <div class="post-img">
-                <PostFeaturedImage post={post} />
-              </div>
-              <div>
-                <PostExcerpt post={post} />
-                <ReadMoreLink post={post} />
-              </div>
-            </div>
+            <PostDiscription post={post} />
           </div>
         ))
       )
@@ -62,24 +52,3 @@ const [posts, rankedPosts, tags, numberOfPages] = await Promise.all([
     <BlogTagsLink heading="ダグ" tags={tags} />
   </div>
 </Layout>
-<style>
-  .post-discription {
-    display: flex;
-
-  }
-  .post-img {
-    display: block;
-    width: 160px;
-    height: 120px;
-    margin: 0 1rem 0 0;
-    border: solid 1px #ddd;
-    border-radius: 4px;
-    box-sizing: border-box;
-    overflow: hidden;
-    flex-shrink: 0;
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-size: cover;
-    transition: .3s ease-in-out;
-  }
-</style>
