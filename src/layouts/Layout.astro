@@ -44,7 +44,7 @@ if (database.Icon && database.Icon.Type === 'file') {
   }
 }
 
-const asidePaddingTop = coverImageURL ? '200px' : '60px'
+const asidePaddingTop = coverImageURL ? '20px' : '60px'
 ---
 
 <!DOCTYPE html>
@@ -76,16 +76,17 @@ const asidePaddingTop = coverImageURL ? '200px' : '60px'
   <body>
     <GoogleAnalytics trackingId={PUBLIC_GA_TRACKING_ID} />
     <Hader />
+    <header>
+      {
+        coverImageURL && (
+          <div class="cover">
+            <img src={coverImageURL} />
+          </div>
+        )
+      }
+    </header>
     <div class="container">
       <main>
-        {
-          coverImageURL && (
-            <div class="cover">
-              <img src={coverImageURL} />
-            </div>
-          )
-        }
-
         <div class="content">
           <header>
             <h1>
@@ -98,7 +99,7 @@ const asidePaddingTop = coverImageURL ? '200px' : '60px'
                     </>
                   ) : database.Icon && database.Icon.Type === 'external' ? (
                     <>
-                      <img src={database.Icon.Url} />
+                      <img src={database.Icon.Url}/>
                       {database.Title}
                     </>
                   ) : database.Icon && database.Icon.Type === 'file' ? (
@@ -229,6 +230,10 @@ const asidePaddingTop = coverImageURL ? '200px' : '60px'
     vertical-align: sub;
   }
   main header h1 a img.custom-icon {
+    display: block;
+    width: 120px;
+    height: 120px;
+    margin: -120px 0 12px;
     border-radius: var(--radius);
   }
 
@@ -441,4 +446,5 @@ const asidePaddingTop = coverImageURL ? '200px' : '60px'
     padding: 0.5rem 1rem;
     line-height: 1.2rem;
   }
+  
 </style>
