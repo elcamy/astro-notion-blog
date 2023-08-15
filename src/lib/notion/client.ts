@@ -1,4 +1,8 @@
 import fs, { createWriteStream } from 'node:fs'
+import axios, { AxiosResponse } from 'axios'
+import sharp from 'sharp'
+import retry from 'async-retry'
+import ExifTransformer from 'exif-be-gone'
 import {
   NOTION_API_SECRET,
   DATABASE_ID,
@@ -48,7 +52,7 @@ import type {
   Reference,
 } from '../interfaces'
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-import { Client } from '@notionhq/client'
+import { Client, APIResponseError } from '@notionhq/client'
 
 const client = new Client({
   auth: NOTION_API_SECRET,
@@ -56,6 +60,8 @@ const client = new Client({
 
 let postsCache: Post[] | null = null
 let dbCache: Database | null = null
+
+const numberOfRetry = 2
 
 export async function getAllPosts(): Promise<Post[]> {
   if (postsCache !== null) {
@@ -91,9 +97,25 @@ export async function getAllPosts(): Promise<Post[]> {
 
   let results: responses.PageObject[] = []
   while (true) {
-    const res = (await client.databases.query(
-      params as any // eslint-disable-line @typescript-eslint/no-explicit-any
-    )) as responses.QueryDatabaseResponse
+    const res = await retry(
+      async (bail) => {
+        try {
+          return (await client.databases.query(
+            params as any // eslint-disable-line @typescript-eslint/no-explicit-any
+          )) as responses.QueryDatabaseResponse
+        } catch (error: unknown) {
+          if (error instanceof APIResponseError) {
+            if (error.status && error.status >= 400 && error.status < 500) {
+              bail(error)
+            }
+          }
+          throw error
+        }
+      },
+      {
+        retries: numberOfRetry,
+      }
+    )
 
     results = results.concat(res.results)
 
@@ -216,9 +238,25 @@ export async function getAllBlocksByBlockId(blockId: string): Promise<Block[]> {
     }
 
     while (true) {
-      const res = (await client.blocks.children.list(
-        params as any // eslint-disable-line @typescript-eslint/no-explicit-any
-      )) as responses.RetrieveBlockChildrenResponse
+      const res = await retry(
+        async (bail) => {
+          try {
+            return (await client.blocks.children.list(
+              params as any // eslint-disable-line @typescript-eslint/no-explicit-any
+            )) as responses.RetrieveBlockChildrenResponse
+          } catch (error: unknown) {
+            if (error instanceof APIResponseError) {
+              if (error.status && error.status >= 400 && error.status < 500) {
+                bail(error)
+              }
+            }
+            throw error
+          }
+        },
+        {
+          retries: numberOfRetry,
+        }
+      )
 
       results = results.concat(res.results)
 
@@ -295,9 +333,26 @@ export async function getBlock(blockId: string): Promise<Block> {
   const params: requestParams.RetrieveBlock = {
     block_id: blockId,
   }
-  const res = (await client.blocks.retrieve(
-    params as any // eslint-disable-line @typescript-eslint/no-explicit-any
-  )) as responses.RetrieveBlockResponse
+
+  const res = await retry(
+    async (bail) => {
+      try {
+        return (await client.blocks.retrieve(
+          params as any // eslint-disable-line @typescript-eslint/no-explicit-any
+        )) as responses.RetrieveBlockResponse
+      } catch (error: unknown) {
+        if (error instanceof APIResponseError) {
+          if (error.status && error.status >= 400 && error.status < 500) {
+            bail(error)
+          }
+        }
+        throw error
+      }
+    },
+    {
+      retries: numberOfRetry,
+    }
+  )
 
   return _buildBlock(res)
 }
@@ -321,19 +376,21 @@ export async function getAllTags(): Promise<SelectProperty[]> {
 }
 
 export async function downloadFile(url: URL) {
-  const signal = AbortSignal.timeout(REQUEST_TIMEOUT_MS)
-
-  let res!: Response
+  let res!: AxiosResponse
   try {
-    res = await fetch(url.toString(), { signal })
+    res = await axios({
+      method: 'get',
+      url: url.toString(),
+      timeout: REQUEST_TIMEOUT_MS,
+      responseType: 'stream',
+    })
   } catch (err) {
-    if (err instanceof AbortSignal) {
-      console.log('File fetch request was aborted')
-      return Promise.resolve()
-    }
+    console.log(err)
+    return Promise.resolve()
   }
 
-  if (!res || !res.body) {
+  if (!res || res.status != 200) {
+    console.log(res)
     return Promise.resolve()
   }
 
@@ -345,16 +402,15 @@ export async function downloadFile(url: URL) {
   const filename = decodeURIComponent(url.pathname.split('/').slice(-1)[0])
   const filepath = `${dir}/${filename}`
 
-  const reader = res.body.getReader()
   const writeStream = createWriteStream(filepath)
+  const rotate = sharp().rotate()
 
-  while (true) {
-    const { done, value } = await reader.read()
-    if (done) {
-      break
-    }
-    writeStream.write(value)
+  let stream = res.data
+
+  if (res.headers['content-type'] === 'image/jpeg') {
+    stream = stream.pipe(rotate)
   }
+  stream.pipe(new ExifTransformer()).pipe(writeStream)
 }
 
 export async function getDatabase(): Promise<Database> {
@@ -366,9 +422,25 @@ export async function getDatabase(): Promise<Database> {
     database_id: DATABASE_ID,
   }
 
-  const res = (await client.databases.retrieve(
-    params as any // eslint-disable-line @typescript-eslint/no-explicit-any
-  )) as responses.RetrieveDatabaseResponse
+  const res = await retry(
+    async (bail) => {
+      try {
+        return (await client.databases.retrieve(
+          params as any // eslint-disable-line @typescript-eslint/no-explicit-any
+        )) as responses.RetrieveDatabaseResponse
+      } catch (error: unknown) {
+        if (error instanceof APIResponseError) {
+          if (error.status && error.status >= 400 && error.status < 500) {
+            bail(error)
+          }
+        }
+        throw error
+      }
+    },
+    {
+      retries: numberOfRetry,
+    }
+  )
 
   let icon: FileObject | Emoji | null = null
   if (res.icon) {
@@ -575,21 +647,23 @@ function _buildBlock(blockObject: responses.BlockObject): Block {
     case 'callout':
       if (blockObject.callout) {
         let icon: FileObject | Emoji | null = null
-        if (
-          blockObject.callout.icon.type === 'emoji' &&
-          'emoji' in blockObject.callout.icon
-        ) {
-          icon = {
-            Type: blockObject.callout.icon.type,
-            Emoji: blockObject.callout.icon.emoji,
-          }
-        } else if (
-          blockObject.callout.icon.type === 'external' &&
-          'external' in blockObject.callout.icon
-        ) {
-          icon = {
-            Type: blockObject.callout.icon.type,
-            Url: blockObject.callout.icon.external?.url || '',
+        if (blockObject.callout.icon) {
+          if (
+            blockObject.callout.icon.type === 'emoji' &&
+            'emoji' in blockObject.callout.icon
+          ) {
+            icon = {
+              Type: blockObject.callout.icon.type,
+              Emoji: blockObject.callout.icon.emoji,
+            }
+          } else if (
+            blockObject.callout.icon.type === 'external' &&
+            'external' in blockObject.callout.icon
+          ) {
+            icon = {
+              Type: blockObject.callout.icon.type,
+              Url: blockObject.callout.icon.external?.url || '',
+            }
           }
         }
 
@@ -703,9 +777,25 @@ async function _getTableRows(blockId: string): Promise<TableRow[]> {
     }
 
     while (true) {
-      const res = (await client.blocks.children.list(
-        params as any // eslint-disable-line @typescript-eslint/no-explicit-any
-      )) as responses.RetrieveBlockChildrenResponse
+      const res = await retry(
+        async (bail) => {
+          try {
+            return (await client.blocks.children.list(
+              params as any // eslint-disable-line @typescript-eslint/no-explicit-any
+            )) as responses.RetrieveBlockChildrenResponse
+          } catch (error: unknown) {
+            if (error instanceof APIResponseError) {
+              if (error.status && error.status >= 400 && error.status < 500) {
+                bail(error)
+              }
+            }
+            throw error
+          }
+        },
+        {
+          retries: numberOfRetry,
+        }
+      )
 
       results = results.concat(res.results)
 
@@ -752,9 +842,25 @@ async function _getColumns(blockId: string): Promise<Column[]> {
     }
 
     while (true) {
-      const res = (await client.blocks.children.list(
-        params as any // eslint-disable-line @typescript-eslint/no-explicit-any
-      )) as responses.RetrieveBlockChildrenResponse
+      const res = await retry(
+        async (bail) => {
+          try {
+            return (await client.blocks.children.list(
+              params as any // eslint-disable-line @typescript-eslint/no-explicit-any
+            )) as responses.RetrieveBlockChildrenResponse
+          } catch (error: unknown) {
+            if (error instanceof APIResponseError) {
+              if (error.status && error.status >= 400 && error.status < 500) {
+                bail(error)
+              }
+            }
+            throw error
+          }
+        },
+        {
+          retries: numberOfRetry,
+        }
+      )
 
       results = results.concat(res.results)
 
@@ -842,15 +948,18 @@ function _buildPost(pageObject: responses.PageObject): Post {
   }
 
   let featuredImage: FileObject | null = null
-  if (
-    prop.FeaturedImage.files &&
-    prop.FeaturedImage.files.length > 0 &&
-    prop.FeaturedImage.files[0].file
-  ) {
-    featuredImage = {
-      Type: prop.FeaturedImage.type,
-      Url: prop.FeaturedImage.files[0].file.url,
-      ExpiryTime: prop.FeaturedImage.files[0].file.expiry_time,
+  if (prop.FeaturedImage.files && prop.FeaturedImage.files.length > 0) {
+    if (prop.FeaturedImage.files[0].external) {
+      featuredImage = {
+        Type: prop.FeaturedImage.type,
+        Url: prop.FeaturedImage.files[0].external.url,
+      }
+    } else if (prop.FeaturedImage.files[0].file) {
+      featuredImage = {
+        Type: prop.FeaturedImage.type,
+        Url: prop.FeaturedImage.files[0].file.url,
+        ExpiryTime: prop.FeaturedImage.files[0].file.expiry_time,
+      }
     }
   }
 
