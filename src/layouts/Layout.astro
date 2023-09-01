@@ -168,12 +168,6 @@ const asidePaddingTop = coverImageURL ? '20px' : '60px'
     order: 2;
     justify-content: space-between;
   }
-  @media (max-width: 640px) {
-    main {
-      order: 1;
-    }
-  }
-
   aside {
     order: 1;
     width: 300px;
@@ -181,13 +175,18 @@ const asidePaddingTop = coverImageURL ? '20px' : '60px'
     background-color: #f4f4f4;
   }
   @media (max-width: 640px) {
+    main {
+      order: 1;
+    }
+    .container {
+      display: block;
+    }
     aside {
       order: 2;
       width: 100%;
       padding: 40px 20px 20px;
     }
   }
-
   div.cover {
   }
   div.cover img {
