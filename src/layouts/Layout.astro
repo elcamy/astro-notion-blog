@@ -88,6 +88,15 @@ const asidePaddingTop = coverImageURL ? '20px' : '60px'
         )
       }
     </header>
+    <nav class="top-nav">
+      <ul>
+        <li><a href="/">ALL</a></li>
+        <li><a href="/posts/tag/Google%20Cloud">Google Cloud</a></li>
+        <li><a href="/posts/tag/生成AI">生成AI</a></li>
+        <li><a href="/posts/tag/論文紹介">論文紹介</a></li>
+        <li><a href="/posts/tag/エージェントベースシミュレーション">エージェントベースシミュレーション</a></li>
+      </ul>
+    </nav>
     <div class="container">
       <main>
         <div class="content">
@@ -260,7 +269,7 @@ const asidePaddingTop = coverImageURL ? '20px' : '60px'
     display: block;
     width: 120px;
     height: 120px;
-    margin: -120px 0 12px;
+    margin: 0 0 12px;
     border-radius: var(--radius);
   }
 
@@ -286,6 +295,50 @@ const asidePaddingTop = coverImageURL ? '20px' : '60px'
     color: inherit;
     text-decoration: underline;
   }
+  .top-nav {
+    background-color: #222;
+    color: #fff;
+  }
+  .top-nav ul {
+    margin: 0 300px;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .top-nav li {
+    width: 25%;
+    text-align: center;
+  }
+  .top-nav li a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    display: block;
+    padding: 15px 0;
+  }
+  .top-nav li a:hover {
+    background-color: #666;
+  }
+  @media (max-width: 768px) {
+  .top-nav ul {
+    margin: 0 0;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .top-nav li {
+    width: 100%;
+  }
+  .top-nav li a {
+    padding: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  .top-nav li a:last-child {
+    border-bottom: none;
+  }
+}
 </style>
 
 <style is:global>
