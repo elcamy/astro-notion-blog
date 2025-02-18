@@ -26,7 +26,7 @@ let headings = blocks.filter((b: interfaces.Block) =>
 
 ---
 <div class="blog-headline-link">
-  <h4>{heading}</h4>
+  <h3>{heading}</h3>
 
   <div class="post-headline">
     <TableOfContents block={dummyBlock} headings={headings}/>
@@ -34,7 +34,11 @@ let headings = blocks.filter((b: interfaces.Block) =>
 </div>
 <style>
   .blog-headline-link {
-
+  }
+  .blog-headline-link h3 {
+    margin: 0;
+    color: #333;
+    font-size: 0.95rem;
   }
   .post-headline {
     padding: 0.5rem 0;

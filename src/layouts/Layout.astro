@@ -170,11 +170,6 @@ const asidePaddingTop = coverImageURL ? '20px' : '60px'
   .container > div {
     display: flex;
   }
-  @media (max-width: 1024px) {
-    .container > div {
-      display: block;
-    }
-  }
   main {
     flex: 1;
     order: 2;
@@ -198,7 +193,21 @@ const asidePaddingTop = coverImageURL ? '20px' : '60px'
     overflow-y: auto; /* 高さがビューポートを超えるとスクロール可能に */
   }
   @media (max-width: 1024px) {
-    aside, .right_navi {
+    .container {
+      display: block;
+    }
+    .container > div {
+      display: block;
+    }
+    main {
+      order: 1;
+    }
+    aside {
+      order: 2;
+      width: 100%;
+      padding: 40px 20px 20px;
+    }
+    .right_navi {
       display:none
     }    
   }
