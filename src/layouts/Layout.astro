@@ -89,13 +89,15 @@ const asidePaddingTop = coverImageURL ? '20px' : '60px'
       }
     </header>
     <nav class="top-nav">
-      <ul>
-        <li><a href="/">ALL</a></li>
-        <li><a href="/posts/tag/Google%20Cloud">Google Cloud</a></li>
-        <li><a href="/posts/tag/生成AI">生成AI</a></li>
-        <li><a href="/posts/tag/論文紹介">論文紹介</a></li>
-        <li><a href="/posts/tag/エージェントベースシミュレーション">エージェントベースシミュレーション</a></li>
-      </ul>
+      <div>
+        <ul>
+          <li><a href="/">ALL</a></li>
+          <li><a href="/posts/tag/Google%20Cloud">Google Cloud</a></li>
+          <li><a href="/posts/tag/生成AI">生成AI</a></li>
+          <li><a href="/posts/tag/論文紹介">論文紹介</a></li>
+          <li><a href="/posts/tag/エージェントベースシミュレーション">エージェントベースシミュレーション</a></li>
+        </ul>
+      </div>
     </nav>
     <div class="container">
       <main>
@@ -131,6 +133,9 @@ const asidePaddingTop = coverImageURL ? '20px' : '60px'
           </header>
 
           <slot name="main" />
+          <aside class="aside_bottom">
+            <slot name="aside" />
+          </aside>
 
           <footer>
             <div>
@@ -143,13 +148,15 @@ const asidePaddingTop = coverImageURL ? '20px' : '60px'
         </div>
       </main>
 
-      <aside>
-        <slot name="aside" />
-      </aside>
+        <aside class="sidebar">
+          <slot name="aside" />
+        </aside>
 
+      {Astro.slots.right_navi && (
       <nav class="right_navi">
         <slot name="right_navi" />
       </nav>
+      )}
 
     </div>
 
@@ -171,7 +178,7 @@ const asidePaddingTop = coverImageURL ? '20px' : '60px'
     display: flex;
   }
   main {
-    margin: 0 10px;
+    margin: 0 20px;
     flex: 1;
     order: 2;
     justify-content: space-between;
@@ -179,14 +186,17 @@ const asidePaddingTop = coverImageURL ? '20px' : '60px'
     background-color: #fff;
   }
   aside {
-    margin: 0 10px;
+    margin: 0 20px;
     order: 1;
     width: 300px;
     padding: var(--asidePaddingTop) 20px 20px;
     /* background-color: #fff; */
   }
+  .aside_bottom{
+    display: none;
+  }
   .right_navi {
-    margin: 0 10px;
+    margin: 0 20px;
     top: 55px;
     order: 3;
     width: 300px;
@@ -197,6 +207,22 @@ const asidePaddingTop = coverImageURL ? '20px' : '60px'
     height: calc(100vh - 20px); /* ビューポートの高さから上部距離を引いた高さにする */
     overflow-y: auto; /* 高さがビューポートを超えるとスクロール可能に */
   }
+  @media (max-width: 1366px) {
+    main {
+      order: 1;
+    }
+    aside {
+      display:none
+    }
+    .aside_bottom{
+      display: block;
+      width: 100%;
+      margin: 0;
+    }
+    .right_navi {
+      order: 2;
+    }
+  }
   @media (max-width: 1024px) {
     .container {
       display: block;
@@ -204,19 +230,12 @@ const asidePaddingTop = coverImageURL ? '20px' : '60px'
     .container > div {
       display: block;
     }
-    main {
-      order: 1;
-      margin: 0;
-    }
     aside {
-      order: 2;
-      width: 100%;
-      margin: 0;
-      padding: 40px 20px 20px;
+      display:none
     }
     .right_navi {
       display:none
-    }    
+    }
   }
   div.cover {
   }
@@ -301,17 +320,22 @@ const asidePaddingTop = coverImageURL ? '20px' : '60px'
     background-color: #222;
     color: #fff;
   }
-  .top-nav ul {
-    margin: 0 300px;
+  .top-nav > div {
+    background-color: #222;
+    color: #fff;
     max-width: 1000px;
+    margin: 0 auto;
+  }
+  .top-nav ul {
+    margin: 0 40px;
     padding: 0;
     list-style: none;
     display: flex;
+    justify-content: space-between;;
     align-items: center;
-    justify-content: space-between;
   }
   .top-nav li {
-    width: 25%;
+    width: 20%;
     text-align: center;
   }
   .top-nav li a {
@@ -325,9 +349,8 @@ const asidePaddingTop = coverImageURL ? '20px' : '60px'
   .top-nav li a:hover {
     background-color: #666;
   }
-  @media (max-width: 1024px) {
+  @media (max-width: 1366px) {
   .top-nav ul {
-    margin: 0 1rem;
     justify-content: space-between;
   }
   @media (max-width: 640px) {
