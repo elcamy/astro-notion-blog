@@ -171,22 +171,27 @@ const asidePaddingTop = coverImageURL ? '20px' : '60px'
     display: flex;
   }
   main {
+    margin: 0 10px;
     flex: 1;
     order: 2;
     justify-content: space-between;
     max-width: 1000px;
+    background-color: #fff;
   }
   aside {
+    margin: 0 10px;
     order: 1;
     width: 300px;
     padding: var(--asidePaddingTop) 20px 20px;
+    /* background-color: #fff; */
   }
   .right_navi {
+    margin: 0 10px;
     top: 55px;
     order: 3;
     width: 300px;
     padding: 20px 20px;
-    background-color: #f4f4f4;
+    background-color: #fff;
     flex-shrink: 0; /* サイドバーの幅が縮小しないように設定 */
     position: sticky;
     height: calc(100vh - 20px); /* ビューポートの高さから上部距離を引いた高さにする */
@@ -201,10 +206,12 @@ const asidePaddingTop = coverImageURL ? '20px' : '60px'
     }
     main {
       order: 1;
+      margin: 0;
     }
     aside {
       order: 2;
       width: 100%;
+      margin: 0;
       padding: 40px 20px 20px;
     }
     .right_navi {
@@ -349,6 +356,7 @@ const asidePaddingTop = coverImageURL ? '20px' : '60px'
     --gap: 1rem;
     --gap-double: 2rem;
 
+    --bg: #f1f1f1;
     --fg: #333;
     --accents-1: #666;
     --accents-2: #666;
