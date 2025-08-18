@@ -1,26 +1,22 @@
-name: Prevent scheduled workflow from being automatically disabled
+name: Keepalive
 
 on:
   schedule:
-    - cron: '0 0 1,15 * *'
+    - cron: '0 0 1,15 * *'  # 毎月1日と15日
   workflow_dispatch:
 
-concurrency:
-  group: keepalive
-  cancel-in-progress: false
-
 jobs:
-
   keepalive:
-    permissions:
-      actions: write
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
 
-      - name: Re-enable workflow
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_REPO: ${{ github.repository }}
+      - name: Configure Git
         run: |
-          gh workflow enable keepalive.yml
-          gh workflow enable deploy.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Create empty commit
+        run: |
+          git commit --allow-empty -m "chore: keepalive [skip ci]" || echo "No changes"
+          git push origin HEAD:${GITHUB_REF}
