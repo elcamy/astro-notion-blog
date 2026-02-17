@@ -214,10 +214,17 @@ const forceShowFromUrl = Astro.url.searchParams.get('showBanner') === '1'
   @media (max-width: 640px) {
     .cta-banner {
       bottom: 12px;
-      right: 12px;
-      left: 12px;
-      margin: 0 auto;
-      max-width: calc(100% - 24px);
+      left: 0;
+      right: 0;
+      width: 100%;
+      margin: 0;
+      max-width: none;
+      padding: 0 12px;
+      box-sizing: border-box;
+    }
+
+    .cta-banner__img {
+      max-width: 100%;
     }
 
     .cta-banner__content {
