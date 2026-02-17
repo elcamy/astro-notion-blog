@@ -5,6 +5,7 @@ import { getNavLink, getStaticFilePath, filePath } from '../lib/blog-helpers.ts'
 import '../styles/syntax-coloring.css'
 import GoogleAnalytics from '../components/GoogleAnalytics.astro'
 import Hader from '../components/Hader.astro'
+import CtaBanner from '../components/CtaBanner.astro'
 
 export interface Props {
   title: string
@@ -166,6 +167,11 @@ const asidePaddingTop = coverImageURL ? '20px' : '60px'
         <script src={getStaticFilePath('/scripts/fslightbox.js')} />
       )
     }
+    <CtaBanner
+      href="https://elcamy.com/service/dify"
+      imageUrl="https://drive.google.com/thumbnail?id=1QJSLeBxMxUBjNXTnpVxEcNJ9k2zQ38Vk&sz=w1000"
+      imageAlt="Dify構築運用のご相談"
+    />
   </body>
 </html>
 

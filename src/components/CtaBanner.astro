@@ -1,0 +1,221 @@
+---
+export interface Props {
+  /** リンク先URL（例: /service/dify） */
+  href?: string
+  /** バナー全体を1枚画像で表示する場合の画像URL（指定時はテキストレイアウトを無効） */
+  imageUrl?: string
+  /** 画像のalt */
+  imageAlt?: string
+}
+
+const { href = '/service/dify', imageUrl, imageAlt = 'Dify構築運用のご相談' } = Astro.props
+---
+
+<div id="elcamyMiniBanner" class="cta-banner" aria-label="お知らせバナー">
+  <button class="cta-banner__close" type="button" aria-label="閉じる">✕</button>
+  <a class="cta-banner__link" href={href} aria-label="サービスページへ">
+    {imageUrl ? (
+      <img
+        src={imageUrl}
+        alt={imageAlt}
+        loading="eager"
+        class="cta-banner__img"
+      />
+    ) : (
+      <div class="cta-banner__content">
+        <span class="cta-banner__logo">ELCAMY</span>
+        <div class="cta-banner__head">
+          <span class="cta-banner__tag">生成AI活用術</span>
+          <span class="cta-banner__sub">OSS版でも社内専用で使える!</span>
+        </div>
+        <p class="cta-banner__title">お客様環境の<br />専用Dify</p>
+        <p class="cta-banner__desc">業務・セキュリティ要件に耐えうる構築と運用</p>
+      </div>
+    )}
+  </a>
+</div>
+
+<script>
+  (function () {
+    const EXCLUDE_PATHS = [
+      '/contact',
+      '/service/dify',
+      '/recruit',
+      '/privacy'
+    ];
+
+    const path = location.pathname;
+    if (EXCLUDE_PATHS.some((p) => path.startsWith(p))) return;
+
+    const KEY = 'elcamyMiniBannerDismissedUntil';
+    const banner = document.getElementById('elcamyMiniBanner');
+    if (!banner) return;
+
+    const forceShow = new URLSearchParams(location.search).get('showBanner') === '1';
+    const until = Number(localStorage.getItem(KEY) || 0);
+    if (!forceShow && Date.now() < until) return;
+
+    let shown = false;
+    const show = () => {
+      if (shown) return;
+      shown = true;
+      banner.classList.add('is-show');
+    };
+
+    const timer = setTimeout(show, 8000);
+
+    const onScroll = () => {
+      const doc = document.documentElement;
+      const scrolled = (window.scrollY + window.innerHeight) / doc.scrollHeight;
+      if (scrolled >= 0.5) show();
+      if (shown) window.removeEventListener('scroll', onScroll);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    const closeBtn = banner.querySelector('button.cta-banner__close');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => {
+        banner.classList.remove('is-show');
+        clearTimeout(timer);
+        window.removeEventListener('scroll', onScroll);
+        const days = 7;
+        localStorage.setItem(KEY, String(Date.now() + days * 24 * 60 * 60 * 1000));
+      });
+    }
+  })();
+</script>
+
+<style>
+  .cta-banner {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+    transition: opacity 0.35s ease, transform 0.35s ease, visibility 0.35s;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .cta-banner.is-show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .cta-banner__close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 2;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    font-size: 14px;
+    line-height: 1;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: background 0.2s;
+  }
+
+  .cta-banner__close:hover {
+    background: rgba(255, 255, 255, 0.35);
+  }
+
+  .cta-banner__link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .cta-banner__img {
+    display: block;
+    max-width: 320px;
+    width: 100%;
+    height: auto;
+    vertical-align: top;
+  }
+
+  .cta-banner__content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 16px 40px 16px 20px;
+    min-width: 280px;
+    max-width: 320px;
+    background: linear-gradient(135deg, #4a1a6b 0%, #2d1b4e 40%, #1a1a1a 100%);
+    color: #fff;
+  }
+
+  .cta-banner__logo {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    opacity: 0.9;
+  }
+
+  .cta-banner__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 8px;
+    margin-top: 2px;
+  }
+
+  .cta-banner__tag {
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .cta-banner__sub {
+    font-size: 0.65rem;
+    opacity: 0.9;
+  }
+
+  .cta-banner__title {
+    margin: 8px 0 4px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1.35;
+    letter-spacing: 0.02em;
+  }
+
+  .cta-banner__title br {
+    display: block;
+  }
+
+  .cta-banner__desc {
+    margin: 0;
+    font-size: 0.7rem;
+    line-height: 1.4;
+    opacity: 0.9;
+  }
+
+  @media (max-width: 640px) {
+    .cta-banner {
+      bottom: 12px;
+      right: 12px;
+      left: 12px;
+      margin: 0 auto;
+      max-width: calc(100% - 24px);
+    }
+
+    .cta-banner__content {
+      min-width: auto;
+      padding: 14px 36px 14px 16px;
+    }
+
+    .cta-banner__title {
+      font-size: 1rem;
+    }
+  }
+</style>
