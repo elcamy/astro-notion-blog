@@ -9,9 +9,10 @@ export interface Props {
 }
 
 const { href = '/service/dify', imageUrl, imageAlt = 'Dify構築運用のご相談' } = Astro.props
+const forceShowFromUrl = Astro.url.searchParams.get('showBanner') === '1'
 ---
 
-<div id="elcamyMiniBanner" class="cta-banner" aria-label="お知らせバナー">
+<div id="elcamyMiniBanner" class:list={['cta-banner', forceShowFromUrl && 'is-show']} aria-label="お知らせバナー">
   <button class="cta-banner__close" type="button" aria-label="閉じる">✕</button>
   <a class="cta-banner__link" href={href} aria-label="サービスページへ">
     {imageUrl ? (
@@ -35,52 +36,62 @@ const { href = '/service/dify', imageUrl, imageAlt = 'Dify構築運用のご相�
   </a>
 </div>
 
-<script>
+<script is:inline>
   (function () {
-    const EXCLUDE_PATHS = [
-      '/contact',
-      '/service/dify',
-      '/recruit',
-      '/privacy'
-    ];
+    function init() {
+      const EXCLUDE_PATHS = [
+        '/contact',
+        '/service/dify',
+        '/recruit',
+        '/privacy'
+      ];
 
-    const path = location.pathname;
-    if (EXCLUDE_PATHS.some((p) => path.startsWith(p))) return;
+      const path = location.pathname.replace(/\/$/, '') || '/';
+      if (EXCLUDE_PATHS.some((p) => path === p || path.startsWith(p + '/'))) return;
 
-    const KEY = 'elcamyMiniBannerDismissedUntil';
-    const banner = document.getElementById('elcamyMiniBanner');
-    if (!banner) return;
+      const KEY = 'elcamyMiniBannerDismissedUntil';
+      const banner = document.getElementById('elcamyMiniBanner');
+      if (!banner) return;
 
-    const forceShow = new URLSearchParams(location.search).get('showBanner') === '1';
-    const until = Number(localStorage.getItem(KEY) || 0);
-    if (!forceShow && Date.now() < until) return;
+      const forceShow = new URLSearchParams(location.search).get('showBanner') === '1';
+      const until = Number(localStorage.getItem(KEY) || 0);
+      if (!forceShow && Date.now() < until) return;
 
-    let shown = false;
-    const show = () => {
-      if (shown) return;
-      shown = true;
-      banner.classList.add('is-show');
-    };
+      let shown = false;
+      const show = () => {
+        if (shown) return;
+        shown = true;
+        banner.classList.add('is-show');
+      };
 
-    const timer = setTimeout(show, 8000);
+      const timerFast = setTimeout(show, 3000);
+      const timerFallback = setTimeout(show, 15000);
 
-    const onScroll = () => {
-      const doc = document.documentElement;
-      const scrolled = (window.scrollY + window.innerHeight) / doc.scrollHeight;
-      if (scrolled >= 0.5) show();
-      if (shown) window.removeEventListener('scroll', onScroll);
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
+      const onScroll = () => {
+        const doc = document.documentElement;
+        const scrolled = (window.scrollY + window.innerHeight) / doc.scrollHeight;
+        if (scrolled >= 0.5) show();
+        if (shown) window.removeEventListener('scroll', onScroll);
+      };
+      window.addEventListener('scroll', onScroll, { passive: true });
 
-    const closeBtn = banner.querySelector('button.cta-banner__close');
-    if (closeBtn) {
-      closeBtn.addEventListener('click', () => {
-        banner.classList.remove('is-show');
-        clearTimeout(timer);
-        window.removeEventListener('scroll', onScroll);
-        const days = 7;
-        localStorage.setItem(KEY, String(Date.now() + days * 24 * 60 * 60 * 1000));
-      });
+      const closeBtn = banner.querySelector('button.cta-banner__close');
+      if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+          banner.classList.remove('is-show');
+          clearTimeout(timerFast);
+          clearTimeout(timerFallback);
+          window.removeEventListener('scroll', onScroll);
+          const days = 1;
+          localStorage.setItem(KEY, String(Date.now() + days * 24 * 60 * 60 * 1000));
+        });
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
     }
   })();
 </script>
